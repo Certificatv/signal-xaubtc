@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#060b08">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Signal XAU/BTC">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23060b08'/%3E%3Cpath d='M20 65 L38 40 L52 55 L80 25' stroke='%2317c98c' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='80' cy='25' r='6' fill='%23ffd166'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23060b08'/%3E%3Cpath d='M20 65 L38 40 L52 55 L80 25' stroke='%2317c98c' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='80' cy='25' r='6' fill='%23ffd166'/%3E%3C/svg%3E">
+<link rel="manifest" href="./manifest.json">
+<title>XAU/USD & BTC/USD — Bureau Ichimoku M5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #060b08;
+    --panel: rgba(12,22,17,0.74);
+    --panel-line: #1f3527;
+    --gold: #17c98c;
+    --gold-hi: #ffd166;
+    --accent-2: #e2703a;
+    --bull: #22e0ac;
+    --bear: #ff5d5d;
+    --text: #eef2ea;
+    --muted: #7c9686;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(23,201,140,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(255,209,102,0.06), transparent 55%),
+      repeating-linear-gradient(45deg, rgba(255,209,102,0.018) 0px, rgba(255,209,102,0.018) 1px, transparent 1px, transparent 26px),
+      repeating-linear-gradient(-45deg, rgba(23,201,140,0.02) 0px, rgba(23,201,140,0.02) 1px, transparent 1px, transparent 26px),
+      linear-gradient(180deg, #030603, #060b08 40%, #070d09);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+
+  header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:1px solid var(--panel-line);
+    padding-bottom:18px;margin-bottom:24px;flex-wrap:wrap;gap:12px;
+  }
+  .brand-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;letter-spacing:.18em;color:var(--gold);
+    text-transform:uppercase;margin-bottom:4px;
+    text-shadow:0 0 12px rgba(23,201,140,0.5);
+  }
+  h1{
+    font-family:'Orbitron', sans-serif;font-weight:700;
+    font-size:26px;margin:0;letter-spacing:.01em;
+    background:linear-gradient(90deg, var(--gold-hi), var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .price-block{text-align:right;}
+  .live-price{
+    font-family:'IBM Plex Mono', monospace;font-size:30px;font-weight:600;
+    color:var(--gold-hi);text-shadow:0 0 16px rgba(255,209,102,0.3);
+  }
+  .live-price.up{color:var(--bull);text-shadow:0 0 16px rgba(34,224,172,0.4);}
+  .live-price.down{color:var(--bear);text-shadow:0 0 16px rgba(255,93,93,0.4);}
+  .updated{font-size:12px;color:var(--muted);font-family:'IBM Plex Mono', monospace;}
+
+  .symbol-tabs{display:flex;gap:8px;margin-top:10px;}
+  .sym-tab{
+    background:transparent;border:1px solid var(--panel-line);color:var(--muted);
+    padding:6px 14px;border-radius:20px;font-size:12px;font-family:'IBM Plex Mono', monospace;
+    font-weight:500;cursor:pointer;
+  }
+  .sym-tab:hover{border-color:var(--gold);color:var(--text);background:transparent;}
+  .sym-tab.active{background:linear-gradient(135deg, var(--gold), var(--accent-2));border-color:var(--gold);color:#04140d;font-weight:600;}
+
+  .setup{
+    background:var(--panel);border:1px solid var(--panel-line);border-radius:12px;
+    padding:20px;margin-bottom:24px;backdrop-filter:blur(14px);
+    box-shadow:0 0 30px rgba(23,201,140,0.05), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .setup label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px;}
+  .setup-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+  .setup input{
+    background:#08120c;border:1px solid var(--panel-line);color:var(--text);
+    padding:10px 12px;border-radius:6px;font-family:'IBM Plex Mono', monospace;
+    font-size:13px;min-width:280px;flex:1;
+  }
+  .setup input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(23,201,140,0.14);}
+  button{
+    background:linear-gradient(135deg, var(--gold), var(--accent-2));color:#04140d;border:none;padding:11px 18px;
+    border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;
+    font-family:'IBM Plex Sans', sans-serif;transition:filter .15s, box-shadow .15s;
+    box-shadow:0 0 18px rgba(23,201,140,0.25);
+  }
+  button:hover{filter:brightness(1.1);box-shadow:0 0 26px rgba(23,201,140,0.4);}
+  button.ghost{
+    background:transparent;border:1px solid var(--panel-line);color:var(--text);
+    box-shadow:none;
+  }
+  button.ghost:hover{border-color:var(--gold);background:transparent;box-shadow:0 0 14px rgba(23,201,140,0.15);}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  .setup-hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;}
+  .setup-hint a{color:var(--gold);}
+
+  .status-line{
+    font-family:'IBM Plex Mono', monospace;font-size:12.5px;color:var(--muted);
+    margin-top:10px;min-height:18px;
+  }
+  .status-line.err{color:var(--bear);}
+  .status-line.ok{color:var(--bull);}
+
+  .grid{display:grid;grid-template-columns:1fr 320px;gap:20px;}
+  @media (max-width:880px){.grid{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--panel);border:1px solid var(--panel-line);border-radius:12px;
+    padding:18px;backdrop-filter:blur(14px);
+    box-shadow:0 0 30px rgba(23,201,140,0.05), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .card h2{
+    font-family:'Orbitron', sans-serif;font-size:14.5px;font-weight:600;margin:0 0 14px;
+    display:flex;justify-content:space-between;align-items:center;
+    letter-spacing:.02em;color:var(--gold-hi);
+  }
+  .card h2 .tf{
+    font-family:'IBM Plex Mono', monospace;font-size:11px;color:var(--gold);
+    border:1px solid var(--panel-line);padding:3px 8px;border-radius:20px;
+    font-weight:400;
+  }
+
+  canvas{width:100%;display:block;}
+
+  .signal-badge{
+    text-align:center;border-radius:10px;padding:22px 12px;margin-bottom:16px;
+    border:1px solid var(--panel-line);
+  }
+  .signal-badge .label{
+    font-family:'IBM Plex Mono', monospace;font-size:11px;letter-spacing:.16em;
+    color:var(--muted);text-transform:uppercase;margin-bottom:8px;
+  }
+  .signal-badge .value{
+    font-family:'Orbitron', sans-serif;font-weight:700;font-size:24px;
+  }
+  .signal-badge.buy{border-color:var(--bull);background:rgba(34,224,172,0.07);box-shadow:0 0 24px rgba(34,224,172,0.12);}
+  .signal-badge.buy .value{color:var(--bull);text-shadow:0 0 14px rgba(34,224,172,0.4);}
+  .signal-badge.sell{border-color:var(--bear);background:rgba(255,93,93,0.07);box-shadow:0 0 24px rgba(255,93,93,0.12);}
+  .signal-badge.sell .value{color:var(--bear);text-shadow:0 0 14px rgba(255,93,93,0.4);}
+  .signal-badge.neutral .value{color:var(--muted);}
+
+  .checklist{list-style:none;margin:0;padding:0;}
+  .checklist li{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 0;border-bottom:1px solid var(--panel-line);font-size:13px;
+  }
+  .checklist li:last-child{border-bottom:none;}
+  .checklist .tag{
+    font-family:'IBM Plex Mono', monospace;font-size:11px;padding:2px 8px;
+    border-radius:20px;
+  }
+  .tag.yes{background:rgba(34,224,172,0.15);color:var(--bull);}
+  .tag.no{background:rgba(255,93,93,0.12);color:var(--bear);}
+
+  .log{margin-top:20px;}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th{
+    text-align:left;color:var(--muted);font-weight:500;font-family:'IBM Plex Mono', monospace;
+    font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+    padding:6px 8px;border-bottom:1px solid var(--panel-line);
+  }
+  td{padding:7px 8px;border-bottom:1px solid var(--panel-line);font-family:'IBM Plex Mono', monospace;}
+  .b-buy{color:var(--bull);font-weight:600;}
+  .b-sell{color:var(--bear);font-weight:600;}
+  .b-neutral{color:var(--muted);}
+
+  .muted-note{color:var(--muted);font-size:12.5px;margin:0;}
+  .plan-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:9px 0;border-bottom:1px solid var(--panel-line);font-size:13px;
+  }
+  .plan-row:last-child{border-bottom:none;}
+  .plan-row .k{color:var(--muted);}
+  .plan-row .v{font-family:'IBM Plex Mono', monospace;font-weight:600;}
+  .v.entry{color:var(--gold-hi);}
+  .v.stop{color:var(--bear);}
+  .v.tp{color:var(--bull);}
+  .rr-pill{
+    font-family:'IBM Plex Mono', monospace;font-size:10.5px;color:var(--muted);
+    margin-left:8px;
+  }
+
+  .zone-tag{
+    display:inline-block;font-family:'IBM Plex Mono', monospace;font-size:10px;
+    padding:1px 6px;border-radius:4px;margin-left:6px;
+  }
+  .zone-tag.res{background:rgba(255,93,93,0.15);color:var(--bear);}
+  .zone-tag.sup{background:rgba(34,224,172,0.15);color:var(--bull);}
+  .zone-tag.warn{background:rgba(255,209,102,0.15);color:var(--gold-hi);}
+  .news-item{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    padding:8px 0;border-bottom:1px solid var(--panel-line);font-size:12.5px;
+  }
+  .news-item:last-child{border-bottom:none;}
+  .news-item .when{font-family:'IBM Plex Mono', monospace;color:var(--muted);white-space:nowrap;}
+  .news-item .title{flex:1;}
+  .news-impact{
+    font-family:'IBM Plex Mono', monospace;font-size:10px;padding:1px 7px;border-radius:10px;
+    background:rgba(255,93,93,0.15);color:var(--bear);white-space:nowrap;
+  }
+  .news-warning{
+    background:rgba(255,93,93,0.12);border:1px solid var(--bear);border-radius:6px;
+    padding:8px 10px;font-size:12px;color:var(--bear);margin-bottom:10px;
+  }
+  .pullback-warning{
+    background:rgba(255,209,102,0.10);border:1px solid var(--gold-hi);border-radius:6px;
+    padding:8px 10px;font-size:12px;color:var(--gold-hi);margin-bottom:10px;line-height:1.5;
+  }
+  .toolate-note{
+    background:rgba(124,150,134,0.10);border:1px solid var(--panel-line);border-radius:6px;
+    padding:8px 10px;font-size:12px;color:var(--muted);margin-bottom:4px;line-height:1.5;
+  }
+
+  .journal-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .stat-box{
+    flex:1;min-width:90px;background:rgba(255,255,255,0.02);border:1px solid var(--panel-line);
+    border-radius:8px;padding:10px;text-align:center;
+  }
+  .stat-box .num{font-family:'IBM Plex Mono', monospace;font-size:20px;font-weight:600;color:var(--gold-hi);}
+  .stat-box .lbl{font-size:10.5px;color:var(--muted);margin-top:2px;}
+  .lesson-item{
+    font-size:12px;padding:8px 10px;border-radius:6px;margin-bottom:6px;
+    background:rgba(255,93,93,0.06);border-left:3px solid var(--bear);color:var(--text);
+  }
+  .correction-item{
+    font-size:12px;padding:8px 10px;border-radius:6px;margin-bottom:6px;
+    background:rgba(34,224,172,0.06);border-left:3px solid var(--bull);color:var(--text);
+  }
+
+  .disclaimer{
+    margin-top:26px;font-size:11.5px;color:var(--muted);line-height:1.6;
+    border-top:1px solid var(--panel-line);padding-top:14px;
+  }
+  .urgent-alert{
+    display:none;
+    position:sticky; top:0; z-index:80;
+    text-align:center; font-weight:700; padding:13px 16px;
+    font-family:'Orbitron', sans-serif; letter-spacing:.03em; cursor:pointer;
+    color:#04140d; font-size:13.5px;
+  }
+  .urgent-alert.show{
+    display:block;
+    animation: urgentFlash 0.9s infinite;
+  }
+  @keyframes urgentFlash{
+    0%, 100% { background-color:#17c98c; box-shadow:0 0 18px rgba(23,201,140,0.55); }
+    50% { background-color:#3dffc0; box-shadow:0 0 48px rgba(61,255,192,0.95); }
+  }
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:10px;font-family:'IBM Plex Mono', monospace;}
+  .legend span{display:inline-flex;align-items:center;gap:5px;}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+</style>
+</head>
+<body>
+<div id="urgentAlert" class="urgent-alert"></div>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="brand-eyebrow">Bureau d'analyse — Multi-actifs</div>
+      <h1 id="pairTitle">XAU/USD · M5 Ichimoku</h1>
+      <div class="symbol-tabs" id="symbolTabs">
+        <button class="sym-tab active" data-symbol="XAU/USD" data-label="Or au comptant">XAU/USD</button>
+        <button class="sym-tab" data-symbol="BTC/USD" data-label="Bitcoin">BTC/USD</button>
+      </div>
+    </div>
+    <div class="price-block">
+      <div class="live-price" id="livePrice">—</div>
+      <div class="updated" id="updatedAt">Aucune donnée chargée</div>
+    </div>
+  </header>
+
+  <div class="setup card" id="setupCard">
+    <label for="apiKey">Clé API TwelveData</label>
+    <div class="setup-row">
+      <input type="password" id="apiKey" placeholder="Colle ta clé gratuite ici">
+      <button id="connectBtn">Connecter</button>
+      <button class="ghost" id="refreshBtn" disabled>Rafraîchir</button>
+    </div>
+    <div class="setup-hint">
+      Clé gratuite sur <a href="https://twelvedata.com/pricing" target="_blank">twelvedata.com</a> (offre "Basic", 800 requêtes/jour). Elle reste uniquement dans cette session, jamais enregistrée.
+    </div>
+    <div class="status-line" id="statusLine"></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Chandelier &amp; nuage Ichimoku <span class="tf">M5 · 200 bougies</span></h2>
+      <canvas id="chart" height="420"></canvas>
+      <div class="legend">
+        <span><span class="dot" style="background:#e8c468"></span>Tenkan-sen (9)</span>
+        <span><span class="dot" style="background:#8fb8d9"></span>Kijun-sen (26)</span>
+        <span><span class="dot" style="background:#c9a227"></span>Nuage (Kumo)</span>
+        <span><span class="dot" style="background:#ab8fd9"></span>Chikou span</span>
+        <span><span class="dot" style="background:#c4453c"></span>Résistance</span>
+        <span><span class="dot" style="background:#3aa374"></span>Support</span>
+        <span><span class="dot" style="background:#8b6fbd"></span>Fibonacci</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Signal courant</h2>
+        <div class="signal-badge neutral" id="signalBadge">
+          <div class="label">Décision</div>
+          <div class="value" id="signalValue">EN ATTENTE</div>
+        </div>
+        <ul class="checklist" id="checklist"></ul>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h2>Plan de trade</h2>
+        <div id="tradePlan"><p class="muted-note">Aucun trade actif — attends un signal ACHAT/VENTE.</p></div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h2>Gestion du risque</h2>
+        <label for="capital">Capital (USD)</label>
+        <div class="setup-row" style="margin-bottom:10px;">
+          <input type="number" id="capital" value="1000" min="0" style="min-width:0;">
+        </div>
+        <label for="riskPct">Risque par trade (%)</label>
+        <div class="setup-row">
+          <input type="number" id="riskPct" value="1" min="0.1" step="0.1" style="min-width:0;">
+        </div>
+        <div class="status-line" id="riskLine" style="margin-top:12px;"></div>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <h2>Position en cours <span class="tf">suivi live</span></h2>
+        <div id="openPositionPanel"><p class="muted-note">Aucune position suivie pour l'instant.</p></div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h2>Entrée Buy/Sell Limit <span class="tf">zone anticipée</span></h2>
+        <div id="sniperPlan"><p class="muted-note">Analyse en cours…</p></div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h2>Calendrier économique</h2>
+        <div id="newsPanel"><p class="muted-note">Chargement du calendrier…</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card log">
+    <h2>Historique des signaux</h2>
+    <table>
+      <thead><tr><th>Heure</th><th>Prix</th><th>Signal</th><th>Score</th><th>Entrée</th><th>SL</th><th>TP1</th><th>TP2</th></tr></thead>
+      <tbody id="logBody"><tr><td colspan="8" style="color:var(--muted)">Pas encore de signal.</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <h2>Amélioration continue <span class="tf">journal auto-évaluateur</span></h2>
+    <div class="journal-stats" id="journalStats">
+      <div class="stat-box"><div class="num" id="statTotal">0</div><div class="lbl">Trades suivis</div></div>
+      <div class="stat-box"><div class="num" id="statWins">0</div><div class="lbl">Gagnants</div></div>
+      <div class="stat-box"><div class="num" id="statLosses">0</div><div class="lbl">Perdants</div></div>
+      <div class="stat-box"><div class="num" id="statWinrate">—</div><div class="lbl">Taux de réussite</div></div>
+    </div>
+    <div id="lessonsPanel"><p class="muted-note">Aucun trade évalué pour l'instant — les leçons apparaîtront après les premiers signaux clôturés.</p></div>
+
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--panel-line);">
+      <label for="tradeSelect">Ton commentaire concerne quel trade ?</label>
+      <div class="setup-row" style="margin-bottom:10px;">
+        <select id="tradeSelect" style="background:#08120c;border:1px solid var(--panel-line);color:var(--text);padding:10px 12px;border-radius:6px;font-family:'IBM Plex Mono', monospace;font-size:12.5px;min-width:0;flex:1;">
+          <option value="">— aucun trade suivi pour l'instant —</option>
+        </select>
+      </div>
+      <label for="tradeComment">Ton commentaire (ce qui s'est passé, ce que tu voulais faire)</label>
+      <div class="setup-row" style="margin-bottom:10px;">
+        <textarea id="tradeComment" rows="3" placeholder="Ex : je voulais prendre le TP2 mais le retracement m'a stoppé avant." style="background:#08120c;border:1px solid var(--panel-line);color:var(--text);padding:10px 12px;border-radius:6px;font-family:'IBM Plex Sans', sans-serif;font-size:13px;width:100%;resize:vertical;"></textarea>
+      </div>
+      <button id="saveCommentBtn" class="ghost" type="button">Enregistrer le commentaire</button>
+      <div class="status-line" id="commentStatus"></div>
+      <div id="commentsPanel" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    Outil d'analyse technique automatisée, à titre informatif uniquement — ce n'est pas un conseil en investissement. Les signaux Ichimoku reposent sur des règles historiques et ne garantissent aucun résultat futur. Vérifie toujours ton propre risque avant toute décision de trading.
+  </div>
+</div>
+
+<script>
+(function(){
+  const apiKeyInput = document.getElementById('apiKey');
+  const connectBtn = document.getElementById('connectBtn');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const statusLine = document.getElementById('statusLine');
+  const livePriceEl = document.getElementById('livePrice');
+  const updatedAtEl = document.getElementById('updatedAt');
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+  const signalBadge = document.getElementById('signalBadge');
+  const signalValue = document.getElementById('signalValue');
+  const checklistEl = document.getElementById('checklist');
+  const logBody = document.getElementById('logBody');
+
+  let apiKey = '';
+  let candles = []; // chronological order {time, open, high, low, close}
+  let autoTimer = null;
+  let signalLog = [];
+  let lastPrice = null;
+  let lastAlertKey = null;
+  let currentSymbol = 'XAU/USD';
+  const MIN_TP_DOLLARS = 10; // Take Profit minimum obligatoire, en $ de distance, sur tous les trades
+
+  // ---- Journal auto-évaluateur & paramètres adaptatifs (persistés) ----
+  let tradeJournal = []; // {id,symbol,time,orderType,entry,stop,tp1,status,lessonTag}
+  let tradeFeedback = []; // {id,tradeId,time,text}
+  let adaptiveParams = {
+    newsWindowMin: 30,
+    atrSpikeMultiplier: 2.2,
+    minConfluence: 1,
+    minConfirmations: 3,
+    maxExtensionATR: 3.5,
+    lessonCounts: {}
+  };
+
+  function storageKey(symbol){
+    return 'state_' + symbol.replace('/', '');
+  }
+
+  const DEFAULT_PARAMS = {newsWindowMin:30, atrSpikeMultiplier:2.2, minConfluence:1, minConfirmations:3, maxExtensionATR:3.5, stopBufferMultiplier:0.5, lessonCounts:{}};
+  const hasCloudStorage = typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function';
+
+  async function loadSymbolState(symbol){
+    try {
+      let raw = null;
+      if (hasCloudStorage){
+        const res = await window.storage.get(storageKey(symbol), false);
+        raw = res ? res.value : null;
+      } else {
+        raw = localStorage.getItem(storageKey(symbol));
+      }
+      if (raw){
+        const parsed = JSON.parse(raw);
+        tradeJournal = parsed.journal || [];
+        tradeFeedback = parsed.feedback || [];
+        adaptiveParams = Object.assign({}, DEFAULT_PARAMS, parsed.params || {});
+      } else {
+        tradeJournal = [];
+        tradeFeedback = [];
+        adaptiveParams = Object.assign({}, DEFAULT_PARAMS);
+      }
+    } catch (e){
+      tradeJournal = [];
+      tradeFeedback = [];
+      adaptiveParams = Object.assign({}, DEFAULT_PARAMS);
+    }
+  }
+
+  async function saveSymbolState(symbol){
+    try {
+      const payload = JSON.stringify({journal: tradeJournal.slice(0,60), feedback: tradeFeedback.slice(0,40), params: adaptiveParams});
+      if (hasCloudStorage){
+        await window.storage.set(storageKey(symbol), payload, false);
+      } else {
+        localStorage.setItem(storageKey(symbol), payload);
+      }
+    } catch (e){ /* stockage indisponible, on continue sans persistance */ }
+  }
+
+  const symbolLabels = {'XAU/USD': "XAU/USD · M5 Ichimoku", 'BTC/USD': "BTC/USD · M5 Ichimoku"};
+
+  function setStatus(msg, kind){
+    statusLine.textContent = msg;
+    statusLine.className = 'status-line' + (kind ? ' ' + kind : '');
+  }
+
+  function fmtTime(d){
+    return d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  }
+
+  async function fetchCandles(symbol){
+    const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbol)}&interval=5min&outputsize=200&apikey=${encodeURIComponent(apiKey)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status === 'error' || data.code) {
+      throw new Error(data.message || 'Erreur API TwelveData');
+    }
+    if (!data.values) throw new Error('Réponse inattendue de l\'API');
+    const rows = data.values.map(v => ({
+      time: new Date(v.datetime.replace(' ', 'T')),
+      open: parseFloat(v.open),
+      high: parseFloat(v.high),
+      low: parseFloat(v.low),
+      close: parseFloat(v.close)
+    })).reverse(); // API returns newest first -> chronological
+    return rows;
+  }
+
+  // ---- Ichimoku ----
+  function highLow(arr, i, period){
+    let hi = -Infinity, lo = Infinity;
+    for (let k = Math.max(0, i - period + 1); k <= i; k++){
+      hi = Math.max(hi, arr[k].high);
+      lo = Math.min(lo, arr[k].low);
+    }
+    return {hi, lo};
+  }
+
+  function computeIchimoku(data){
+    const n = data.length;
+    const tenkan = new Array(n).fill(null);
+    const kijun = new Array(n).fill(null);
+    const senkouA = new Array(n).fill(null); // plotted at i+26, stored aligned to source index i
+    const senkouB = new Array(n).fill(null);
+    const chikou = new Array(n).fill(null); // close plotted 26 back -> chikou[i] = close[i], displayed at i-26
+
+    for (let i = 0; i < n; i++){
+      if (i >= 8){
+        const {hi, lo} = highLow(data, i, 9);
+        tenkan[i] = (hi + lo) / 2;
+      }
+      if (i >= 25){
+        const {hi, lo} = highLow(data, i, 26);
+        kijun[i] = (hi + lo) / 2;
+      }
+      if (tenkan[i] != null && kijun[i] != null){
+        senkouA[i] = (tenkan[i] + kijun[i]) / 2;
+      }
+      if (i >= 51){
+        const {hi, lo} = highLow(data, i, 52);
+        senkouB[i] = (hi + lo) / 2;
+      }
+      chikou[i] = data[i].close;
+    }
+    return {tenkan, kijun, senkouA, senkouB, chikou};
+  }
+
+  function generateSignal(data, ich){
+    const n = data.length;
+    const i = n - 1; // latest closed candle
+    const shift = 26;
+    // Cloud values applicable to current price = senkouA/B computed 26 periods ago (displaced forward)
+    const cloudIdx = i - shift;
+    let cloudA = null, cloudB = null;
+    if (cloudIdx >= 0){
+      cloudA = ich.senkouA[cloudIdx];
+      cloudB = ich.senkouB[cloudIdx];
+    }
+    const price = data[i].close;
+    const conditions = [];
+
+    // 1. Price vs cloud
+    let priceAboveCloud = null;
+    if (cloudA != null && cloudB != null){
+      const top = Math.max(cloudA, cloudB);
+      const bottom = Math.min(cloudA, cloudB);
+      if (price > top) priceAboveCloud = true;
+      else if (price < bottom) priceAboveCloud = false;
+    }
+    conditions.push({
+      label: 'Prix au-dessus du nuage',
+      pass: priceAboveCloud === true,
+      bearPass: priceAboveCloud === false,
+      known: priceAboveCloud !== null
+    });
+
+    // 2. Tenkan/Kijun cross (current vs previous)
+    let tkBull = null;
+    if (ich.tenkan[i] != null && ich.kijun[i] != null && ich.tenkan[i-1] != null && ich.kijun[i-1] != null){
+      const nowDiff = ich.tenkan[i] - ich.kijun[i];
+      const prevDiff = ich.tenkan[i-1] - ich.kijun[i-1];
+      if (nowDiff > 0) tkBull = true;
+      else if (nowDiff < 0) tkBull = false;
+    }
+    conditions.push({
+      label: 'Tenkan au-dessus de Kijun',
+      pass: tkBull === true,
+      bearPass: tkBull === false,
+      known: tkBull !== null
+    });
+
+    // 3. Chikou vs price 26 periods back
+    let chikouBull = null;
+    const refIdx = i - shift;
+    if (refIdx >= 0){
+      const refPrice = data[refIdx].close;
+      if (price > refPrice) chikouBull = true;
+      else if (price < refPrice) chikouBull = false;
+    }
+    conditions.push({
+      label: 'Chikou confirme (vs prix -26)',
+      pass: chikouBull === true,
+      bearPass: chikouBull === false,
+      known: chikouBull !== null
+    });
+
+    // 4. Future cloud direction (current senkouA/B, not yet displaced = future cloud)
+    let futureCloudBull = null;
+    if (ich.senkouA[i] != null && ich.senkouB[i] != null){
+      if (ich.senkouA[i] > ich.senkouB[i]) futureCloudBull = true;
+      else if (ich.senkouA[i] < ich.senkouB[i]) futureCloudBull = false;
+    }
+    conditions.push({
+      label: 'Nuage futur haussier',
+      pass: futureCloudBull === true,
+      bearPass: futureCloudBull === false,
+      known: futureCloudBull !== null
+    });
+
+    const bullScore = conditions.filter(c => c.pass).length;
+    const bearScore = conditions.filter(c => c.bearPass).length;
+
+    let signal = 'NEUTRE';
+    if (bullScore >= 3) signal = 'ACHAT';
+    else if (bearScore >= 3) signal = 'VENTE';
+
+    return {signal, conditions, bullScore, bearScore, price};
+  }
+
+  // ---- ATR (Wilder) ----
+  function computeATR(data, period){
+    const n = data.length;
+    const atr = new Array(n).fill(null);
+    const tr = new Array(n).fill(null);
+    for (let i = 0; i < n; i++){
+      if (i === 0){ tr[i] = data[i].high - data[i].low; continue; }
+      tr[i] = Math.max(
+        data[i].high - data[i].low,
+        Math.abs(data[i].high - data[i-1].close),
+        Math.abs(data[i].low - data[i-1].close)
+      );
+    }
+    for (let i = 0; i < n; i++){
+      if (i === period - 1){
+        let sum = 0;
+        for (let k = 0; k <= i; k++) sum += tr[k];
+        atr[i] = sum / period;
+      } else if (i >= period){
+        atr[i] = (atr[i-1] * (period - 1) + tr[i]) / period;
+      }
+    }
+    return atr;
+  }
+
+  // ---- RSI(14) Wilder ----
+  function computeRSI(data, period){
+    const n = data.length;
+    const rsi = new Array(n).fill(null);
+    const gains = new Array(n).fill(0);
+    const losses = new Array(n).fill(0);
+    for (let i = 1; i < n; i++){
+      const diff = data[i].close - data[i-1].close;
+      gains[i] = diff > 0 ? diff : 0;
+      losses[i] = diff < 0 ? -diff : 0;
+    }
+    let avgGain = null, avgLoss = null;
+    for (let i = 1; i < n; i++){
+      if (i === period){
+        let sg = 0, sl = 0;
+        for (let k = 1; k <= period; k++){ sg += gains[k]; sl += losses[k]; }
+        avgGain = sg / period; avgLoss = sl / period;
+        rsi[i] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain/avgLoss));
+      } else if (i > period){
+        avgGain = (avgGain * (period-1) + gains[i]) / period;
+        avgLoss = (avgLoss * (period-1) + losses[i]) / period;
+        rsi[i] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain/avgLoss));
+      }
+    }
+    return rsi;
+  }
+
+  // ---- Momentum / décélération : les 3 dernières bougies perdent-elles de la force ? ----
+  function checkMomentumDeceleration(data, i, direction){
+    if (i < 3) return false;
+    const bodies = [i-2, i-1, i].map(k => Math.abs(data[k].close - data[k].open));
+    // décélération = corps de bougie qui rapetissent vers la zone (l'élan faiblit avant le retournement attendu)
+    const decelerating = bodies[2] <= bodies[0] * 0.85;
+    // la dernière bougie doit aussi montrer un léger signe de rejet dans le sens attendu
+    const last = data[i];
+    const bodyTop = Math.max(last.open, last.close), bodyBot = Math.min(last.open, last.close);
+    const upperWick = last.high - bodyTop, lowerWick = bodyBot - last.low;
+    if (direction === 'bear') return decelerating && upperWick >= lowerWick;
+    return decelerating && lowerWick >= upperWick;
+  }
+
+  // ---- Trade plan: entrée / stop / TP based on Kijun + structure + ATR buffer ----
+  function computeTradePlan(data, ich, atr, i, signal){
+    if (signal === 'NEUTRE') return null;
+    const entry = data[i].close;
+    const lookback = 10;
+    let swingLow = Infinity, swingHigh = -Infinity;
+    for (let k = Math.max(0, i - lookback + 1); k <= i; k++){
+      swingLow = Math.min(swingLow, data[k].low);
+      swingHigh = Math.max(swingHigh, data[k].high);
+    }
+    const kijun = ich.kijun[i];
+    const atrVal = atr[i] != null ? atr[i] : entry * 0.001;
+    const buffer = atrVal * 0.3;
+
+    if (signal === 'ACHAT'){
+      const stopRef = kijun != null ? Math.min(kijun, swingLow) : swingLow;
+      const stop = stopRef - buffer;
+      const risk = entry - stop;
+      if (!(risk > 0)) return null;
+      return {
+        entry, stop,
+        tp1: entry + Math.max(risk * 1.5, MIN_TP_DOLLARS),
+        tp2: entry + Math.max(risk * 2.5, MIN_TP_DOLLARS * 1.6),
+        risk
+      };
+    } else {
+      const stopRef = kijun != null ? Math.max(kijun, swingHigh) : swingHigh;
+      const stop = stopRef + buffer;
+      const risk = stop - entry;
+      if (!(risk > 0)) return null;
+      return {
+        entry, stop,
+        tp1: entry - Math.max(risk * 1.5, MIN_TP_DOLLARS),
+        tp2: entry - Math.max(risk * 2.5, MIN_TP_DOLLARS * 1.6),
+        risk
+      };
+    }
+  }
+
+  function renderTradePlan(plan, signal){
+    const el = document.getElementById('tradePlan');
+    const riskLine = document.getElementById('riskLine');
+    if (!plan){
+      el.innerHTML = '<p class="muted-note">Aucun trade actif — attends un signal ACHAT/VENTE.</p>';
+      riskLine.textContent = '';
+      return;
+    }
+    el.innerHTML = `
+      <div class="plan-row"><span class="k">Entrée (marché)</span><span class="v entry">${plan.entry.toFixed(2)}</span></div>
+      <div class="plan-row"><span class="k">Stop Loss</span><span class="v stop">${plan.stop.toFixed(2)}</span></div>
+      <div class="plan-row"><span class="k">Take Profit 1</span><span class="v tp">${plan.tp1.toFixed(2)}<span class="rr-pill">R:R 1.5</span></span></div>
+      <div class="plan-row"><span class="k">Take Profit 2</span><span class="v tp">${plan.tp2.toFixed(2)}<span class="rr-pill">R:R 2.5</span></span></div>
+      <div class="plan-row"><span class="k">Risque (distance)</span><span class="v">${plan.risk.toFixed(2)} $/unité</span></div>
+      <p class="muted-note" style="margin-top:6px;">Take Profit plancher garanti : 10 $ minimum, quel que soit le ratio risque/rendement calculé.</p>
+    `;
+
+    const capital = parseFloat(document.getElementById('capital').value) || 0;
+    const riskPct = parseFloat(document.getElementById('riskPct').value) || 0;
+    if (capital > 0 && riskPct > 0 && plan.risk > 0){
+      const riskUsd = capital * (riskPct / 100);
+      riskLine.className = 'status-line';
+      if (currentSymbol === 'BTC/USD'){
+        const sizeBtc = riskUsd / plan.risk;
+        riskLine.textContent = `Risque : ${riskUsd.toFixed(2)} $ → taille ≈ ${sizeBtc.toFixed(4)} BTC`;
+      } else {
+        const sizeOz = riskUsd / plan.risk;
+        const sizeLots = sizeOz / 100; // 1 lot standard = 100 oz
+        riskLine.textContent = `Risque : ${riskUsd.toFixed(2)} $ → taille ≈ ${sizeOz.toFixed(2)} oz (${sizeLots.toFixed(2)} lot standard)`;
+      }
+    } else {
+      riskLine.textContent = '';
+    }
+  }
+
+  // ---- Support/Resistance zones (pivot clustering) ----
+  function findPivots(data, span){
+    const n = data.length;
+    const highs = [], lows = [];
+    for (let i = span; i < n - span; i++){
+      let isHigh = true, isLow = true;
+      for (let k = 1; k <= span; k++){
+        if (data[i].high < data[i-k].high || data[i].high < data[i+k].high) isHigh = false;
+        if (data[i].low > data[i-k].low || data[i].low > data[i+k].low) isLow = false;
+      }
+      if (isHigh) highs.push({idx: i, price: data[i].high});
+      if (isLow) lows.push({idx: i, price: data[i].low});
+    }
+    return {highs, lows};
+  }
+
+  function clusterZones(points, tolerance){
+    const sorted = [...points].sort((a,b) => a.price - b.price);
+    const clusters = [];
+    sorted.forEach(p => {
+      const last = clusters[clusters.length - 1];
+      if (last && Math.abs(p.price - last.avg) <= tolerance){
+        last.prices.push(p.price);
+        last.avg = last.prices.reduce((s,v) => s+v, 0) / last.prices.length;
+        last.touches++;
+      } else {
+        clusters.push({avg: p.price, prices: [p.price], touches: 1});
+      }
+    });
+    return clusters.filter(c => c.touches >= 2);
+  }
+
+  function buildZones(data, atr){
+    const lookback = Math.min(120, data.length);
+    const slice = data.slice(data.length - lookback);
+    const atrVal = atr[atr.length - 1] || (data[data.length-1].close * 0.001);
+    const tolerance = atrVal * 0.6;
+    const {highs, lows} = findPivots(slice, 3);
+    const resZones = clusterZones(highs, tolerance).sort((a,b) => b.touches - a.touches).slice(0, 4);
+    const supZones = clusterZones(lows, tolerance).sort((a,b) => b.touches - a.touches).slice(0, 4);
+    return {resistance: resZones.map(z => z.avg), support: supZones.map(z => z.avg)};
+  }
+
+  // ---- Fibonacci retracement from last significant swing ----
+  function findFibSwing(data){
+    const lookback = Math.min(60, data.length);
+    const slice = data.slice(data.length - lookback);
+    let hiIdx = 0, loIdx = 0;
+    slice.forEach((c, idx) => {
+      if (c.high > slice[hiIdx].high) hiIdx = idx;
+      if (c.low < slice[loIdx].low) loIdx = idx;
+    });
+    const high = slice[hiIdx].high;
+    const low = slice[loIdx].low;
+    const direction = hiIdx > loIdx ? 'up' : 'down'; // up = low happened first, impulse upward
+    return {high, low, direction};
+  }
+
+  function computeFibLevels(swing){
+    const range = swing.high - swing.low;
+    const ratios = [0.382, 0.5, 0.618, 0.786];
+    return ratios.map(r => ({
+      ratio: r,
+      price: swing.direction === 'up' ? swing.high - range * r : swing.low + range * r
+    }));
+  }
+
+  // ---- Trend bias from Ichimoku structure ----
+  function getTrendBias(data, ich, i){
+    const price = data[i].close;
+    const cloudIdx = i - 26;
+    const cloudA = cloudIdx >= 0 ? ich.senkouA[cloudIdx] : null;
+    const cloudB = cloudIdx >= 0 ? ich.senkouB[cloudIdx] : null;
+    let bull = 0, bear = 0;
+    if (cloudA != null && cloudB != null){
+      const top = Math.max(cloudA, cloudB), bot = Math.min(cloudA, cloudB);
+      if (price > top) bull++; else if (price < bot) bear++;
+    }
+    if (ich.tenkan[i] != null && ich.kijun[i] != null){
+      if (ich.tenkan[i] > ich.kijun[i]) bull++; else if (ich.tenkan[i] < ich.kijun[i]) bear++;
+    }
+    if (ich.kijun[i] != null){
+      if (price > ich.kijun[i]) bull++; else if (price < ich.kijun[i]) bear++;
+    }
+    if (bull >= 2 && bull > bear) return 'bull';
+    if (bear >= 2 && bear > bull) return 'bear';
+    return 'neutral';
+  }
+
+  // ---- Anticipated Buy Limit / Sell Limit at the next valid retracement zone ----
+  function detectLimitEntry(data, ich, atr, rsi, zones, fibLevels, swing, newsImminent){
+    const i = data.length - 1;
+    const price = data[i].close;
+    const atrVal = atr[i] != null ? atr[i] : price * 0.001;
+    const bias = getTrendBias(data, ich, i);
+
+    if (newsImminent){
+      return {blocked: true, reason: `Une news USD à fort impact arrive dans moins de ${adaptiveParams.newsWindowMin} min — aucune nouvelle entrée proposée avant qu'elle soit passée.`};
+    }
+
+    const lastRange = data[i].high - data[i].low;
+    if (lastRange > atrVal * adaptiveParams.atrSpikeMultiplier){
+      return {blocked: true, reason: 'Bougie anormalement large (spike de volatilité) — on attend une stabilisation avant de proposer une zone.'};
+    }
+
+    if (bias === 'neutral'){
+      return {blocked: true, reason: 'Pas de biais directionnel clair (prix dans/près du nuage) — aucune zone fiable pour l\'instant.'};
+    }
+
+    const kijunNow = ich.kijun[i];
+    let extensionATR = 0;
+    if (kijunNow != null){
+      extensionATR = Math.abs(price - kijunNow) / atrVal;
+    }
+    if (extensionATR >= adaptiveParams.maxExtensionATR){
+      return {blocked: true, reason: `Le prix est déjà trop étendu par rapport à son équilibre (${extensionATR.toFixed(1)}× ATR au-delà de la Kijun) — ce mouvement est déjà parti et n'est plus rattrapable sans risque de retracement violent. On attend une nouvelle configuration.`};
+    }
+    const isExtended = extensionATR >= 1.5;
+
+    const fib786 = fibLevels.find(f => f.ratio === 0.786);
+    const minDist = atrVal * 0.3;
+    const maxDist = atrVal * 4;
+    const rsiVal = rsi[i];
+
+    function finalize(zone, confluence, entry, stop, risk, tp1, tp2, baseOrderType, direction){
+      const rsiOk = rsiVal != null && (direction === 'bull' ? rsiVal < 45 : rsiVal > 55);
+      const momentumOk = checkMomentumDeceleration(data, i, direction === 'bull' ? 'bull' : 'bear');
+      const confirmations = [
+        {label: 'Biais Ichimoku clair', pass: true},
+        {label: 'Zone / Fibonacci confluente', pass: confluence >= adaptiveParams.minConfluence},
+        {label: 'RSI aligné (extension épuisée)', pass: rsiOk},
+        {label: 'Momentum en décélération + rejet', pass: momentumOk}
+      ];
+      const score = confirmations.filter(c => c.pass).length;
+      if (score < adaptiveParams.minConfirmations){
+        const missing = confirmations.filter(c => !c.pass).map(c => c.label).join(', ');
+        return {blocked: true, reason: `Configuration repérée mais seulement ${score}/4 confirmations réunies (seuil requis : ${adaptiveParams.minConfirmations}/4). Manque : ${missing || 'confirmation supplémentaire'} — mieux vaut ne pas entrer.`};
+      }
+
+      const distanceToZone = Math.abs(price - entry);
+      const entryMode = (distanceToZone <= atrVal * 0.5 && momentumOk) ? 'immediate' : 'limit';
+      const orderType = entryMode === 'immediate'
+        ? (direction === 'bull' ? 'ACHAT IMMÉDIAT' : 'VENTE IMMÉDIATE')
+        : baseOrderType;
+
+      return {
+        blocked: false, orderType, entryMode, kind: zone.kind, confluence,
+        entry, stop, tp1, tp2, risk,
+        extensionATR, isExtended, confirmations, score, rsiAtSignal: rsiVal,
+        context: {atrVal, newsImminent, atrSpike: false}
+      };
+    }
+
+    if (bias === 'bull'){
+      const candidates = []
+        .concat(zones.support.map(p => ({price: p, kind: 'zone'})))
+        .concat(fibLevels.map(f => ({price: f.price, kind: 'fib ' + (f.ratio*100).toFixed(1) + '%'})))
+        .filter(c => c.price < price)
+        .filter(c => fib786 ? c.price > fib786.price - atrVal * 0.5 : true)
+        .filter(c => (price - c.price) >= minDist && (price - c.price) <= maxDist)
+        .sort((a,b) => b.price - a.price);
+
+      if (!candidates.length){
+        return {blocked: true, reason: 'Aucune zone de retracement saine dans une distance raisonnable — attends que le prix s\'approche d\'un support valable.'};
+      }
+      const zone = candidates[0];
+      const confluence = candidates.filter(c => Math.abs(c.price - zone.price) <= atrVal * 0.5).length;
+      const entry = zone.price;
+      const stop = entry - atrVal * adaptiveParams.stopBufferMultiplier;
+      const risk = entry - stop;
+      const nextTarget = zones.resistance.filter(p => p > price).sort((a,b)=>a-b)[0];
+      const tp1 = entry + Math.max(risk * 1.5, MIN_TP_DOLLARS);
+      const tp2Computed = nextTarget && nextTarget > entry + risk * 2 ? nextTarget : entry + risk * 2.5;
+      const tp2 = Math.max(tp2Computed, entry + MIN_TP_DOLLARS * 1.6, tp1 + 0.01);
+      return finalize(zone, confluence, entry, stop, risk, tp1, tp2, 'BUY LIMIT', 'bull');
+    } else {
+      const candidates = []
+        .concat(zones.resistance.map(p => ({price: p, kind: 'zone'})))
+        .concat(fibLevels.map(f => ({price: f.price, kind: 'fib ' + (f.ratio*100).toFixed(1) + '%'})))
+        .filter(c => c.price > price)
+        .filter(c => fib786 ? c.price < fib786.price + atrVal * 0.5 : true)
+        .filter(c => (c.price - price) >= minDist && (c.price - price) <= maxDist)
+        .sort((a,b) => a.price - b.price);
+
+      if (!candidates.length){
+        return {blocked: true, reason: 'Aucune zone de retracement saine dans une distance raisonnable — attends que le prix s\'approche d\'une résistance valable.'};
+      }
+      const zone = candidates[0];
+      const confluence = candidates.filter(c => Math.abs(c.price - zone.price) <= atrVal * 0.5).length;
+      const entry = zone.price;
+      const stop = entry + atrVal * adaptiveParams.stopBufferMultiplier;
+      const risk = stop - entry;
+      const nextTarget = zones.support.filter(p => p < price).sort((a,b)=>b-a)[0];
+      const tp1 = entry - Math.max(risk * 1.5, MIN_TP_DOLLARS);
+      const tp2Computed = nextTarget && nextTarget < entry - risk * 2 ? nextTarget : entry - risk * 2.5;
+      const tp2 = Math.min(tp2Computed, entry - MIN_TP_DOLLARS * 1.6, tp1 - 0.01);
+      return finalize(zone, confluence, entry, stop, risk, tp1, tp2, 'SELL LIMIT', 'bear');
+    }
+  }
+
+  // ---- Alerte d'urgence : entrée immédiate disponible ----
+  function playAlertSound(){
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.18].forEach(delay => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = 880;
+        g.gain.setValueAtTime(0.18, ctx.currentTime + delay);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.16);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(ctx.currentTime + delay);
+        o.stop(ctx.currentTime + delay + 0.18);
+      });
+    } catch (e){ /* audio indisponible, on continue sans son */ }
+  }
+
+  function showUrgentAlert(sig){
+    const el = document.getElementById('urgentAlert');
+    el.textContent = `🚨 ENTRÉE IMMÉDIATE — ${sig.orderType} ${currentSymbol} à ${sig.entry.toFixed(2)}`;
+    el.classList.add('show');
+  }
+
+  function hideUrgentAlert(){
+    document.getElementById('urgentAlert').classList.remove('show');
+  }
+
+  function checkUrgentAlert(sig){
+    if (sig && !sig.blocked && sig.entryMode === 'immediate'){
+      showUrgentAlert(sig);
+      const key = currentSymbol + '|' + sig.entry.toFixed(2) + '|' + sig.orderType;
+      if (key !== lastAlertKey){
+        lastAlertKey = key;
+        playAlertSound();
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+      }
+    } else {
+      hideUrgentAlert();
+      lastAlertKey = null;
+    }
+  }
+
+  function renderSniperPlan(sig){
+    const el = document.getElementById('sniperPlan');
+    if (!sig || sig.blocked){
+      el.innerHTML = `<p class="muted-note">${sig ? sig.reason : 'Aucune configuration détectée pour l\'instant.'}</p>`;
+      return;
+    }
+    const isBuy = sig.orderType.includes('ACHAT') || sig.orderType === 'BUY LIMIT';
+    const dirClass = isBuy ? 'tp' : 'stop';
+    const confluenceTag = sig.confluence > 1
+      ? `<span class="zone-tag sup">Confluence x${sig.confluence}</span>`
+      : `<span class="zone-tag res">Zone simple</span>`;
+    const modeTag = sig.entryMode === 'immediate'
+      ? `<span class="zone-tag sup">Entrée immédiate</span>`
+      : `<span class="zone-tag warn">Ordre en attente (limite)</span>`;
+    let pullbackWarning = '';
+    if (sig.isExtended){
+      pullbackWarning = `<div class="pullback-warning">⚠️ Le mouvement est déjà parti (${sig.extensionATR.toFixed(1)}× ATR d'extension) mais reste rattrapable. Un retracement peut encore survenir avant la continuation — garde ton stop discipliné et ne déplace pas l'entrée pour "chasser" le prix.</div>`;
+    }
+    const confirmList = sig.confirmations.map(c =>
+      `<li>${c.pass ? '✅' : '⬜'} ${c.label}</li>`
+    ).join('');
+    const actionLabel = sig.entryMode === 'immediate'
+      ? 'Entre maintenant au marché, la zone est déjà testée avec confirmation.'
+      : 'Place un ordre en attente (limite) à ce niveau et laisse le marché venir à toi.';
+    el.innerHTML = pullbackWarning + `
+      <div class="plan-row"><span class="k">Action</span><span class="v ${dirClass}">${sig.orderType}</span></div>
+      <div class="plan-row"><span class="k">Mode</span><span class="v">${modeTag}</span></div>
+      <div class="plan-row"><span class="k">Zone d'appui</span><span class="v">${sig.kind} ${confluenceTag}</span></div>
+      <div class="plan-row"><span class="k">Prix d'entrée</span><span class="v entry">${sig.entry.toFixed(2)}</span></div>
+      <div class="plan-row"><span class="k">Stop Loss</span><span class="v stop">${sig.stop.toFixed(2)}</span></div>
+      <div class="plan-row"><span class="k">Take Profit 1</span><span class="v tp">${sig.tp1.toFixed(2)}<span class="rr-pill">R:R 1.5</span></span></div>
+      <div class="plan-row"><span class="k">Take Profit 2</span><span class="v tp">${sig.tp2.toFixed(2)}<span class="rr-pill">≥ R:R 2</span></span></div>
+      <ul class="checklist" style="margin-top:10px;">${confirmList}</ul>
+      <p class="muted-note" style="margin-top:8px;">${actionLabel} TP plancher garanti : 10 $ minimum. Confirmations : ${sig.score}/4.</p>
+    `;
+  }
+
+  // ---- Economic calendar (ForexFactory public feed, USD high-impact) ----
+  async function fetchNews(){
+    const res = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json');
+    const data = await res.json();
+    return data
+      .filter(e => e.country === 'USD' && (e.impact === 'High' || e.impact === 'Medium'))
+      .map(e => ({...e, dt: new Date(e.date)}))
+      .filter(e => !isNaN(e.dt))
+      .sort((a,b) => a.dt - b.dt);
+  }
+
+  // ---- Journal auto-évaluateur : enregistrement, évaluation, corrections ----
+  function recordSignal(symbol, sig, time){
+    if (!sig || sig.blocked) return;
+    tradeJournal.unshift({
+      id: symbol + '_' + time.getTime(),
+      symbol, time: time.toISOString(),
+      orderType: sig.orderType, entryMode: sig.entryMode, entry: sig.entry, stop: sig.stop, tp1: sig.tp1,
+      confluence: sig.confluence, extensionATR: sig.extensionATR,
+      score: sig.score, minConfirmationsAtSignal: adaptiveParams.minConfirmations,
+      rsiAtSignal: sig.rsiAtSignal,
+      wasNearNews: !!(sig.context && sig.context.newsImminent),
+      status: 'pending', lessonTag: null
+    });
+    tradeJournal = tradeJournal.slice(0, 60);
+  }
+
+  function evaluateJournal(data){
+    let changed = false;
+    tradeJournal.forEach(rec => {
+      if (rec.status !== 'pending' || rec.symbol !== currentSymbol) return;
+      const recTime = new Date(rec.time);
+      const isBuy = rec.orderType.includes('ACHAT') || rec.orderType === 'BUY LIMIT';
+      for (let k = 0; k < data.length; k++){
+        if (data[k].time <= recTime) continue;
+        if (isBuy){
+          if (data[k].low <= rec.stop){ rec.status = 'loss'; changed = true; break; }
+          if (data[k].high >= rec.tp1){ rec.status = 'win'; changed = true; break; }
+        } else {
+          if (data[k].high >= rec.stop){ rec.status = 'loss'; changed = true; break; }
+          if (data[k].low <= rec.tp1){ rec.status = 'win'; changed = true; break; }
+        }
+      }
+    });
+
+    // analyse des pertes non encore diagnostiquées -> leçon détaillée + correction
+    tradeJournal.forEach(rec => {
+      if (rec.status !== 'loss' || rec.lessonTag) return;
+      let tag, lesson, correction = null;
+      const detail = `(entrée ${rec.entry.toFixed(2)}, stop ${rec.stop.toFixed(2)}, TP1 ${rec.tp1.toFixed(2)})`;
+
+      if (rec.wasNearNews){
+        tag = 'news_volatility';
+        lesson = `Perte survenue près d'une annonce économique ${detail} — la volatilité a probablement invalidé le stop.`;
+      } else if (rec.confluence <= 1){
+        tag = 'low_confluence';
+        lesson = `Perte sur une zone à confluence faible (${rec.confluence} recoupement seulement) ${detail} — signal trop isolé, pas assez de recoupement zone/Fibonacci.`;
+      } else if (rec.score != null && rec.minConfirmationsAtSignal != null && rec.score <= rec.minConfirmationsAtSignal){
+        tag = 'borderline_confirmation';
+        lesson = `Perte sur un signal qui n'avait que le minimum de confirmations requises (${rec.score}/4, seuil ${rec.minConfirmationsAtSignal}/4) ${detail} — marge de sécurité trop faible dès le départ.`;
+      } else if (rec.extensionATR >= 1.5){
+        tag = 'entered_late';
+        lesson = `Perte sur une entrée prise alors que le prix était déjà étendu (${rec.extensionATR.toFixed(1)}× ATR) ${detail} — probablement entré trop tard dans le mouvement.`;
+      } else {
+        tag = 'market_reversal';
+        lesson = `Perte malgré une configuration propre (${rec.score || 4}/4 confirmations) ${detail} — retournement de marché imprévisible, cela arrive même sur un setup valide.`;
+      }
+      rec.lessonTag = tag;
+      rec.lessonText = lesson;
+      changed = true;
+
+      adaptiveParams.lessonCounts[tag] = (adaptiveParams.lessonCounts[tag] || 0) + 1;
+      const count = adaptiveParams.lessonCounts[tag];
+
+      if (tag === 'news_volatility' && count >= 2 && adaptiveParams.newsWindowMin < 60){
+        adaptiveParams.newsWindowMin += 15;
+        correction = `Fenêtre de blocage avant les news portée à ${adaptiveParams.newsWindowMin} min pour éviter de répéter cette erreur.`;
+      } else if (tag === 'volatility_spike' && count >= 2 && adaptiveParams.atrSpikeMultiplier > 1.5){
+        adaptiveParams.atrSpikeMultiplier = Math.max(1.5, adaptiveParams.atrSpikeMultiplier - 0.3);
+        correction = `Seuil de détection de spike resserré à ${adaptiveParams.atrSpikeMultiplier.toFixed(1)}× ATR.`;
+      } else if (tag === 'low_confluence' && count >= 2 && adaptiveParams.minConfluence < 2){
+        adaptiveParams.minConfluence = 2;
+        correction = 'Confluence minimale relevée à 2 (zone + Fibonacci obligatoires) pour valider une entrée.';
+      } else if (tag === 'borderline_confirmation' && count >= 2 && adaptiveParams.minConfirmations < 4){
+        adaptiveParams.minConfirmations += 1;
+        correction = `Seuil de confirmations relevé à ${adaptiveParams.minConfirmations}/4 — les signaux "tout juste validés" causaient trop de pertes.`;
+      } else if (tag === 'entered_late' && count >= 2 && adaptiveParams.maxExtensionATR > 2.2){
+        adaptiveParams.maxExtensionATR = Math.max(2.2, adaptiveParams.maxExtensionATR - 0.5);
+        correction = `Seuil "trop tard" resserré à ${adaptiveParams.maxExtensionATR.toFixed(1)}× ATR pour rejeter les entrées trop étendues.`;
+      } else if (tag === 'market_reversal' && count >= 3 && adaptiveParams.minConfirmations < 4){
+        adaptiveParams.minConfirmations = 4;
+        correction = 'Exigence de confirmations relevée à 4/4 (aucune tolérance) après plusieurs retournements imprévisibles.';
+      }
+      if (correction){ rec.correction = correction; }
+    });
+
+    if (changed) saveSymbolState(currentSymbol);
+  }
+
+  function renderJournal(){
+    const total = tradeJournal.filter(r => r.status !== 'pending').length;
+    const wins = tradeJournal.filter(r => r.status === 'win').length;
+    const losses = tradeJournal.filter(r => r.status === 'loss').length;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statWins').textContent = wins;
+    document.getElementById('statLosses').textContent = losses;
+    document.getElementById('statWinrate').textContent = total > 0 ? Math.round((wins/total)*100) + '%' : '—';
+
+    const withLessons = tradeJournal.filter(r => r.lessonTag).slice(0, 8);
+    const panel = document.getElementById('lessonsPanel');
+    if (!withLessons.length){
+      panel.innerHTML = '<p class="muted-note">Aucun trade évalué pour l\'instant — les leçons apparaîtront après les premiers signaux clôturés.</p>';
+    } else {
+      panel.innerHTML = withLessons.map(r => {
+        let html = `<div class="lesson-item">📉 ${new Date(r.time).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'})} — ${r.lessonText}</div>`;
+        if (r.correction){
+          html += `<div class="correction-item">✅ Correction appliquée : ${r.correction}</div>`;
+        }
+        return html;
+      }).join('');
+    }
+    renderTradeSelect();
+    renderComments();
+  }
+
+  // ---- Commentaires manuels liés à un trade : nourrissent aussi les corrections automatiques ----
+  function renderTradeSelect(){
+    const sel = document.getElementById('tradeSelect');
+    if (!sel) return;
+    const prevValue = sel.value;
+    const recent = tradeJournal.filter(r => r.symbol === currentSymbol).slice(0, 15);
+    if (!recent.length){
+      sel.innerHTML = '<option value="">— aucun trade suivi pour l\'instant —</option>';
+      return;
+    }
+    sel.innerHTML = recent.map(r => {
+      const statusLabel = r.status === 'pending' ? 'en cours' : r.status === 'win' ? 'gagné' : 'perdu';
+      const when = new Date(r.time).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+      return `<option value="${r.id}">${when} · ${r.orderType} · ${r.entry.toFixed(2)} · ${statusLabel}</option>`;
+    }).join('');
+    if (prevValue && recent.some(r => r.id === prevValue)) sel.value = prevValue;
+  }
+
+  function saveFeedback(){
+    const sel = document.getElementById('tradeSelect');
+    const textArea = document.getElementById('tradeComment');
+    const statusEl = document.getElementById('commentStatus');
+    const text = textArea.value.trim();
+    const tradeId = sel.value;
+    if (!text){
+      statusEl.textContent = 'Écris un commentaire avant d\'enregistrer.';
+      statusEl.className = 'status-line err';
+      return;
+    }
+    const entry = {id: 'fb_' + Date.now(), tradeId: tradeId || null, symbol: currentSymbol, time: new Date().toISOString(), text};
+    tradeFeedback.unshift(entry);
+    tradeFeedback = tradeFeedback.slice(0, 40);
+
+    // Détection de motif : "je voulais TP2/TP mais le stop/retracement m'a sorti" -> stop trop serré pour la cible visée
+    const lower = text.toLowerCase();
+    const mentionsTarget = /tp\s?2|take profit 2|objectif/.test(lower);
+    const mentionsStopped = /(stop|retracement|retraçage|hors march|sorti)/.test(lower);
+    let correction = null;
+    if (mentionsTarget && mentionsStopped){
+      adaptiveParams.lessonCounts['stopped_before_target'] = (adaptiveParams.lessonCounts['stopped_before_target'] || 0) + 1;
+      const count = adaptiveParams.lessonCounts['stopped_before_target'];
+      if (count >= 2 && adaptiveParams.stopBufferMultiplier < 1.0){
+        adaptiveParams.stopBufferMultiplier = Math.min(1.0, adaptiveParams.stopBufferMultiplier + 0.15);
+        correction = `Stop élargi à ${adaptiveParams.stopBufferMultiplier.toFixed(2)}× ATR pour mieux résister aux retracements avant d'atteindre le TP2 — signalé ${count} fois.`;
+        entry.correction = correction;
+      }
+    }
+
+    textArea.value = '';
+    statusEl.textContent = correction ? 'Commentaire enregistré — ' + correction : 'Commentaire enregistré, merci.';
+    statusEl.className = 'status-line ok';
+    saveSymbolState(currentSymbol);
+    renderComments();
+  }
+
+  function renderComments(){
+    const panel = document.getElementById('commentsPanel');
+    if (!panel) return;
+    const mine = tradeFeedback.filter(f => f.symbol === currentSymbol).slice(0, 6);
+    if (!mine.length){
+      panel.innerHTML = '';
+      return;
+    }
+    panel.innerHTML = mine.map(f => {
+      const when = new Date(f.time).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+      let html = `<div class="lesson-item">💬 ${when} — ${f.text}</div>`;
+      if (f.correction){
+        html += `<div class="correction-item">✅ Correction appliquée : ${f.correction}</div>`;
+      }
+      return html;
+    }).join('');
+  }
+
+  // ---- Position en cours : suivi live du dernier trade "pending" sur ce symbole ----
+  function renderOpenPosition(currentPrice){
+    const panel = document.getElementById('openPositionPanel');
+    const rec = tradeJournal.find(r => r.symbol === currentSymbol && r.status === 'pending');
+    if (!rec){
+      panel.innerHTML = '<p class="muted-note">Aucune position suivie pour l\'instant.</p>';
+      return;
+    }
+    const isBuy = rec.orderType.includes('ACHAT') || rec.orderType === 'BUY LIMIT';
+    const distToStop = isBuy ? currentPrice - rec.stop : rec.stop - currentPrice;
+    const distToTp = isBuy ? rec.tp1 - currentPrice : currentPrice - rec.tp1;
+    const totalRisk = Math.abs(rec.entry - rec.stop);
+    const dangerClose = distToStop < totalRisk * 0.25;
+    const dirClass = isBuy ? 'tp' : 'stop';
+    let danger = '';
+    if (dangerClose){
+      danger = `<div class="pullback-warning">⚠️ Le prix se rapproche du Stop Loss (${distToStop.toFixed(2)} $ restants) — surveille la position, un retracement plus profond que prévu est en cours.</div>`;
+    }
+    panel.innerHTML = danger + `
+      <div class="plan-row"><span class="k">Type</span><span class="v ${dirClass}">${rec.orderType}</span></div>
+      <div class="plan-row"><span class="k">Entrée</span><span class="v entry">${rec.entry.toFixed(2)}</span></div>
+      <div class="plan-row"><span class="k">Prix actuel</span><span class="v">${currentPrice.toFixed(2)}</span></div>
+      <div class="plan-row"><span class="k">Distance au Stop</span><span class="v stop">${distToStop.toFixed(2)} $</span></div>
+      <div class="plan-row"><span class="k">Distance au TP1</span><span class="v tp">${distToTp.toFixed(2)} $</span></div>
+      <p class="muted-note" style="margin-top:6px;">Ouvert le ${new Date(rec.time).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'})} · ${rec.confluence >= 2 ? 'confluence forte' : 'confluence simple'}.</p>
+    `;
+  }
+
+  function isNewsImminent(events, windowMinutes){
+    const now = new Date();
+    return events.some(e => e.impact === 'High' && e.dt > now && (e.dt - now) / 60000 <= windowMinutes);
+  }
+
+  function renderNews(events){
+    const el = document.getElementById('newsPanel');
+    const now = new Date();
+    const upcoming = events.filter(e => e.dt >= new Date(now.getTime() - 30*60000)).slice(0, 6);
+    if (!upcoming.length){
+      el.innerHTML = '<p class="muted-note">Aucune news USD à fort impact cette semaine.</p>';
+      return;
+    }
+    const nextEvent = upcoming.find(e => e.dt > now);
+    let warning = '';
+    if (nextEvent){
+      const minsAway = (nextEvent.dt - now) / 60000;
+      if (minsAway <= 30){
+        warning = `<div class="news-warning">⚠️ "${nextEvent.title}" dans ${Math.max(0, Math.round(minsAway))} min — évite d'ouvrir une nouvelle position, la volatilité peut invalider stops et niveaux techniques.</div>`;
+      }
+    }
+    const items = upcoming.map(e => {
+      const impactClass = e.impact === 'High' ? '' : 'style="background:rgba(232,196,104,0.15);color:var(--gold-hi)"';
+      return `<div class="news-item">
+        <span class="when">${e.dt.toLocaleString('fr-FR', {weekday:'short', hour:'2-digit', minute:'2-digit'})}</span>
+        <span class="title">${e.title}</span>
+        <span class="news-impact" ${impactClass}>${e.impact}</span>
+      </div>`;
+    }).join('');
+    el.innerHTML = warning + items;
+  }
+
+  function renderChecklist(conditions, signal){
+    checklistEl.innerHTML = '';
+    conditions.forEach(c => {
+      const li = document.createElement('li');
+      const isBull = signal === 'ACHAT';
+      const isBear = signal === 'VENTE';
+      let tagClass = 'no', tagText = '—';
+      if (c.known){
+        if (c.pass){ tagClass = 'yes'; tagText = 'Oui'; }
+        else if (c.bearPass){ tagClass = 'no'; tagText = 'Non (baissier)'; }
+        else { tagClass = 'no'; tagText = 'Non'; }
+      } else {
+        tagText = 'N/D';
+      }
+      li.innerHTML = `<span>${c.label}</span><span class="tag ${tagClass}">${tagText}</span>`;
+      checklistEl.appendChild(li);
+    });
+
+    signalBadge.className = 'signal-badge';
+    if (signal === 'ACHAT') signalBadge.classList.add('buy');
+    else if (signal === 'VENTE') signalBadge.classList.add('sell');
+    else signalBadge.classList.add('neutral');
+    signalValue.textContent = signal;
+  }
+
+  function pushLog(time, price, signal, score, plan){
+    signalLog.unshift({time, price, signal, score, plan});
+    signalLog = signalLog.slice(0, 25);
+    logBody.innerHTML = signalLog.map(row => {
+      const cls = row.signal === 'ACHAT' ? 'b-buy' : row.signal === 'VENTE' ? 'b-sell' : 'b-neutral';
+      const p = row.plan;
+      const entryTxt = p ? p.entry.toFixed(2) : '—';
+      const slTxt = p ? p.stop.toFixed(2) : '—';
+      const tp1Txt = p ? p.tp1.toFixed(2) : '—';
+      const tp2Txt = p ? p.tp2.toFixed(2) : '—';
+      return `<tr><td>${fmtTime(row.time)}</td><td>${row.price.toFixed(2)}</td><td class="${cls}">${row.signal}</td><td>${row.score}</td><td>${entryTxt}</td><td>${slTxt}</td><td>${tp1Txt}</td><td>${tp2Txt}</td></tr>`;
+    }).join('');
+  }
+
+  // ---- Chart drawing ----
+  function drawChart(data, ich, zones, fibLevels){
+    const dpr = window.devicePixelRatio || 1;
+    const width = canvas.clientWidth;
+    const height = 420;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+
+    const shift = 26;
+    const visibleCount = 110;
+    const startIdx = Math.max(0, data.length - visibleCount);
+    const slice = data.slice(startIdx);
+    const n = slice.length;
+
+    // Determine price range including displaced cloud
+    let minP = Infinity, maxP = -Infinity;
+    slice.forEach((c, idx) => {
+      minP = Math.min(minP, c.low);
+      maxP = Math.max(maxP, c.high);
+      const gi = startIdx + idx;
+      const cA = ich.senkouA[gi], cB = ich.senkouB[gi];
+      if (cA != null){ minP = Math.min(minP, cA); maxP = Math.max(maxP, cA); }
+      if (cB != null){ minP = Math.min(minP, cB); maxP = Math.max(maxP, cB); }
+    });
+    const pad = (maxP - minP) * 0.08 || 1;
+    minP -= pad; maxP += pad;
+
+    const leftPad = 8, rightPad = 60, topPad = 10, botPad = 20;
+    const plotW = width - leftPad - rightPad;
+    const plotH = height - topPad - botPad;
+    const slotW = plotW / (n + shift); // reserve room on right for displaced cloud
+    const y = p => topPad + (maxP - p) / (maxP - minP) * plotH;
+    const x = idx => leftPad + idx * slotW;
+
+    // grid + price labels
+    ctx.strokeStyle = '#1b212b';
+    ctx.fillStyle = '#838a99';
+    ctx.font = '11px IBM Plex Mono, monospace';
+    ctx.lineWidth = 1;
+    const gridLines = 5;
+    for (let g = 0; g <= gridLines; g++){
+      const p = minP + (maxP - minP) * g / gridLines;
+      const yy = y(p);
+      ctx.beginPath();
+      ctx.moveTo(leftPad, yy);
+      ctx.lineTo(width - rightPad, yy);
+      ctx.stroke();
+      ctx.fillText(p.toFixed(2), width - rightPad + 6, yy + 3);
+    }
+
+    // support / resistance zones
+    if (zones){
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1;
+      zones.resistance.forEach(level => {
+        if (level < minP || level > maxP) return;
+        const yy = y(level);
+        ctx.strokeStyle = 'rgba(196,69,60,0.55)';
+        ctx.beginPath(); ctx.moveTo(leftPad, yy); ctx.lineTo(width - rightPad, yy); ctx.stroke();
+      });
+      zones.support.forEach(level => {
+        if (level < minP || level > maxP) return;
+        const yy = y(level);
+        ctx.strokeStyle = 'rgba(58,163,116,0.55)';
+        ctx.beginPath(); ctx.moveTo(leftPad, yy); ctx.lineTo(width - rightPad, yy); ctx.stroke();
+      });
+      ctx.setLineDash([]);
+    }
+
+    // fibonacci retracement levels
+    if (fibLevels){
+      ctx.setLineDash([2, 6]);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(171,143,217,0.7)';
+      fibLevels.forEach(f => {
+        if (f.price < minP || f.price > maxP) return;
+        const yy = y(f.price);
+        ctx.beginPath(); ctx.moveTo(leftPad, yy); ctx.lineTo(width - rightPad, yy); ctx.stroke();
+        ctx.fillStyle = 'rgba(171,143,217,0.9)';
+        ctx.font = '10px IBM Plex Mono, monospace';
+        ctx.fillText((f.ratio * 100).toFixed(1) + '%', leftPad + 4, yy - 3);
+      });
+      ctx.setLineDash([]);
+    }
+
+    // cloud (kumo) — displaced forward by `shift`
+    ctx.beginPath();
+    let started = false;
+    const topPoints = [];
+    const botPoints = [];
+    for (let idx = 0; idx < n; idx++){
+      const gi = startIdx + idx;
+      const a = ich.senkouA[gi], b = ich.senkouB[gi];
+      if (a == null || b == null) continue;
+      const px = x(idx + shift);
+      topPoints.push([px, y(Math.max(a,b))]);
+      botPoints.push([px, y(Math.min(a,b))]);
+    }
+    if (topPoints.length > 1){
+      // color by bullish/bearish segments using average trend
+      ctx.fillStyle = 'rgba(201,162,39,0.16)';
+      ctx.beginPath();
+      ctx.moveTo(topPoints[0][0], topPoints[0][1]);
+      topPoints.forEach(p => ctx.lineTo(p[0], p[1]));
+      for (let k = botPoints.length - 1; k >= 0; k--) ctx.lineTo(botPoints[k][0], botPoints[k][1]);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(201,162,39,0.55)';
+      ctx.beginPath();
+      topPoints.forEach((p, k) => k === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]));
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(201,162,39,0.3)';
+      ctx.beginPath();
+      botPoints.forEach((p, k) => k === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]));
+      ctx.stroke();
+    }
+
+    // candles
+    const bodyW = Math.max(2, slotW * 0.6);
+    slice.forEach((c, idx) => {
+      const px = x(idx);
+      const bullish = c.close >= c.open;
+      ctx.strokeStyle = bullish ? '#3aa374' : '#c4453c';
+      ctx.fillStyle = bullish ? '#3aa374' : '#c4453c';
+      ctx.beginPath();
+      ctx.moveTo(px, y(c.high));
+      ctx.lineTo(px, y(c.low));
+      ctx.stroke();
+      const yOpen = y(c.open), yClose = y(c.close);
+      const top = Math.min(yOpen, yClose);
+      const h = Math.max(1, Math.abs(yOpen - yClose));
+      ctx.fillRect(px - bodyW/2, top, bodyW, h);
+    });
+
+    // tenkan / kijun lines
+    function drawLine(arr, color){
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      let started = false;
+      for (let idx = 0; idx < n; idx++){
+        const gi = startIdx + idx;
+        const v = arr[gi];
+        if (v == null) continue;
+        const px = x(idx);
+        const py = y(v);
+        if (!started){ ctx.moveTo(px, py); started = true; }
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+    drawLine(ich.tenkan, '#e8c468');
+    drawLine(ich.kijun, '#8fb8d9');
+
+    // chikou (displaced back)
+    ctx.strokeStyle = '#ab8fd9';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    let cStarted = false;
+    for (let idx = 0; idx < n; idx++){
+      const gi = startIdx + idx;
+      const v = ich.chikou[gi];
+      if (v == null) continue;
+      const targetIdx = idx - shift;
+      if (targetIdx < 0) continue;
+      const px = x(targetIdx);
+      const py = y(v);
+      if (!cStarted){ ctx.moveTo(px, py); cStarted = true; }
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+
+  async function refresh(){
+    if (!apiKey){ setStatus('Renseigne une clé API pour commencer.', 'err'); return; }
+    setStatus(`Récupération des données ${currentSymbol} M5…`);
+    refreshBtn.disabled = true;
+    try {
+      const data = await fetchCandles(currentSymbol);
+      if (data.length < 60){
+        throw new Error('Historique insuffisant pour calculer Ichimoku (min ~60 bougies).');
+      }
+      candles = data;
+      const ich = computeIchimoku(candles);
+      const atr = computeATR(candles, 14);
+      const rsi = computeRSI(candles, 14);
+      const result = generateSignal(candles, ich);
+      const latest = candles[candles.length - 1];
+      const plan = computeTradePlan(candles, ich, atr, candles.length - 1, result.signal);
+      const zones = buildZones(candles, atr);
+      const swing = findFibSwing(candles);
+      const fibLevels = computeFibLevels(swing);
+
+      evaluateJournal(candles); // met à jour les résultats des trades passés + applique les corrections
+
+      let newsEvents = [];
+      try { newsEvents = await fetchNews(); } catch(e) { /* handled below */ }
+      const newsImminent = isNewsImminent(newsEvents, adaptiveParams.newsWindowMin);
+      const limitEntry = detectLimitEntry(candles, ich, atr, rsi, zones, fibLevels, swing, newsImminent);
+      recordSignal(currentSymbol, limitEntry, latest.time);
+      saveSymbolState(currentSymbol);
+      renderOpenPosition(latest.close);
+
+      const priceChanged = lastPrice != null ? latest.close - lastPrice : 0;
+      livePriceEl.textContent = latest.close.toFixed(2);
+      livePriceEl.className = 'live-price' + (priceChanged > 0 ? ' up' : priceChanged < 0 ? ' down' : '');
+      lastPrice = latest.close;
+      updatedAtEl.textContent = 'Dernière clôture M5 : ' + fmtTime(latest.time) + ' · maj ' + fmtTime(new Date());
+
+      drawChart(candles, ich, zones, fibLevels);
+      renderChecklist(result.conditions, result.signal);
+      renderTradePlan(plan, result.signal);
+      renderSniperPlan(limitEntry);
+      checkUrgentAlert(limitEntry);
+      renderJournal();
+      const score = result.signal === 'ACHAT' ? result.bullScore : result.signal === 'VENTE' ? result.bearScore : Math.max(result.bullScore, result.bearScore);
+      pushLog(latest.time, latest.close, result.signal, score + '/4', plan);
+
+      if (newsEvents.length){
+        renderNews(newsEvents);
+      } else {
+        document.getElementById('newsPanel').innerHTML = '<p class="muted-note">Calendrier indisponible (bloqué par le navigateur ou la source). Réessaie plus tard.</p>';
+      }
+
+      setStatus('Connecté — actualisation automatique toutes les 5 min.', 'ok');
+    } catch (err){
+      setStatus('Erreur : ' + err.message, 'err');
+    } finally {
+      refreshBtn.disabled = false;
+    }
+  }
+
+  connectBtn.addEventListener('click', async () => {
+    const val = apiKeyInput.value.trim();
+    if (!val){ setStatus('Colle une clé API valide.', 'err'); return; }
+    apiKey = val;
+    refreshBtn.disabled = false;
+    if (autoTimer) clearInterval(autoTimer);
+    await loadSymbolState(currentSymbol);
+    renderJournal();
+    refresh();
+    autoTimer = setInterval(refresh, 5 * 60 * 1000);
+  });
+  refreshBtn.addEventListener('click', refresh);
+  document.getElementById('saveCommentBtn').addEventListener('click', saveFeedback);
+  document.getElementById('urgentAlert').addEventListener('click', () => {
+    const target = document.getElementById('sniperPlan');
+    if (target) target.scrollIntoView({behavior: 'smooth', block: 'center'});
+  });
+
+  document.querySelectorAll('.sym-tab').forEach(tab => {
+    tab.addEventListener('click', async () => {
+      if (tab.classList.contains('active')) return;
+      document.querySelectorAll('.sym-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentSymbol = tab.dataset.symbol;
+      document.getElementById('pairTitle').textContent = symbolLabels[currentSymbol] || currentSymbol + ' · M5 Ichimoku';
+      lastPrice = null;
+      candles = [];
+      signalLog = [];
+      logBody.innerHTML = '<tr><td colspan="8" style="color:var(--muted)">Pas encore de signal.</td></tr>';
+      hideUrgentAlert();
+      lastAlertKey = null;
+      await loadSymbolState(currentSymbol);
+      renderJournal();
+      if (apiKey) refresh();
+      else setStatus('Renseigne une clé API pour commencer.', 'err');
+    });
+  });
+
+  ['capital', 'riskPct'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      if (!candles.length) return;
+      const ich = computeIchimoku(candles);
+      const atr = computeATR(candles, 14);
+      const result = generateSignal(candles, ich);
+      const plan = computeTradePlan(candles, ich, atr, candles.length - 1, result.signal);
+      renderTradePlan(plan, result.signal);
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    if (candles.length){
+      const ich = computeIchimoku(candles);
+      const atr = computeATR(candles, 14);
+      const zones = buildZones(candles, atr);
+      const fibLevels = computeFibLevels(findFibSwing(candles));
+      drawChart(candles, ich, zones, fibLevels);
+    }
+  });
+})();
+</script>
+<script>
+  if ('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
